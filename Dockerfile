@@ -1,18 +1,16 @@
-FROM golang:alpine AS build
-ADD api.go .
-RUN go build -v -o /api api.go
-
-FROM node:lts-alpine AS deps
+FROM oven/bun:1-alpine AS build
 RUN apk add --no-cache git
-RUN npm -g install @postlight/parser
-COPY mw-data-url.patch /tmp/
-RUN cd /usr/local/lib/node_modules/@postlight/parser && git apply -v /tmp/mw-data-url.patch
-
-FROM node:lts-alpine
-COPY --from=deps /usr/local/lib/node_modules/@postlight /usr/local/lib/node_modules/@postlight
-RUN ln -s ../lib/node_modules/@postlight/parser/cli.js /usr/local/bin/postlight-parser
 WORKDIR /app
-COPY --from=build /api .
-USER node
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
+COPY mw-data-url.patch /tmp/
+RUN cd node_modules/@postlight/parser && git apply -v /tmp/mw-data-url.patch
+COPY server.ts handler.ts ./
+RUN bun build --compile --minify server.ts --outfile /humantxt
+
+FROM alpine:3
+RUN apk add --no-cache ca-certificates libstdc++
+COPY --from=build /humantxt /app/humantxt
+USER 65534:65534
 EXPOSE 8080
-CMD /app/api
+ENTRYPOINT ["/app/humantxt"]

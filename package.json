@@ -1,0 +1,13 @@
+{
+  "name": "humantxt",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun run server.ts",
+    "test": "bun test",
+    "build": "bun build --compile --minify server.ts --outfile humantxt"
+  },
+  "dependencies": {
+    "@postlight/parser": "^2.2.3"
+  }
+}
