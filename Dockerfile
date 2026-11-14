@@ -1,18 +1,16 @@
-FROM golang:alpine AS build
-ADD api.go .
-RUN go build -v -o /api api.go
+FROM golang:1.24-alpine AS build
+WORKDIR /src
 
-FROM node:lts-alpine AS deps
-RUN apk add --no-cache git
-RUN npm -g install @postlight/parser
-COPY mw-data-url.patch /tmp/
-RUN cd /usr/local/lib/node_modules/@postlight/parser && git apply -v /tmp/mw-data-url.patch
+COPY go.mod go.sum ./
+RUN go mod download
 
-FROM node:lts-alpine
-COPY --from=deps /usr/local/lib/node_modules/@postlight /usr/local/lib/node_modules/@postlight
-RUN ln -s ../lib/node_modules/@postlight/parser/cli.js /usr/local/bin/postlight-parser
-WORKDIR /app
-COPY --from=build /api .
-USER node
+COPY cmd ./cmd
+COPY internal ./internal
+RUN CGO_ENABLED=0 go build -trimpath -ldflags=-s -o /out/humantxt ./cmd/humantxt
+
+FROM gcr.io/distroless/static:nonroot
+COPY --from=build /out/humantxt /humantxt
+ENV ADDR=:8080
 EXPOSE 8080
-CMD /app/api
+USER nonroot:nonroot
+ENTRYPOINT ["/humantxt"]

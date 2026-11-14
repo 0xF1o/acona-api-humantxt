@@ -1,0 +1,16 @@
+{
+  "title": "Extraction works",
+  "author": null,
+  "date_published": "2024-05-01T10:00:00.000Z",
+  "dek": null,
+  "lead_image_url": null,
+  "content": " The first paragraph of the article mentions a relative link and enough words to be picked by the readability algorithm instead of the navigation or the sidebar noise around it.  A second paragraph with more than two hundred characters of body text, so that the article is clearly the most promising candidate on this page and the surrounding boilerplate is dropped from the result. Sidebar advertising copy that should not end up in the extracted text at all.",
+  "next_page_url": null,
+  "url": "https://example.com/news/story/",
+  "domain": "example.com",
+  "excerpt": "The first paragraph of the article mentions a relative link and enough words to be picked by the readability algorithm instead of the navigation or the sidebar noise around it. A second paragraph with&hellip;",
+  "word_count": 78,
+  "direction": "ltr",
+  "total_pages": 1,
+  "rendered_pages": 1
+}

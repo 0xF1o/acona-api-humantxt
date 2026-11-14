@@ -1,4 +1,4 @@
-name: Create and publish a Docker image
+name: CI
 
 on:
   push:
@@ -9,7 +9,35 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build-and-push-image:
+  # the bundle the binary embeds is committed so that "go build" needs no node:
+  # this job is what keeps it from drifting away from the sources in js/
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci --prefix js && npm run --prefix js build
+      - name: committed bundle is up to date
+        run: git diff --exit-code internal/vm/bundle/humantxt.js
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Vet
+        run: |
+          test -z "$(gofmt -l cmd internal)"
+          go vet ./...
+      - name: Test
+        run: go test ./...
+
+  image:
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -17,7 +45,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Log in to the Container registry
         uses: docker/login-action@v2

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Testpage — HumanTXT fixture</title>
+  <meta name="description" content="A fixture page used by the tests.">
+  <meta name="author" content="Ada Lovelace">
+  <meta property="article:published_time" content="2024-05-01T10:00:00Z">
+  <meta property="og:title" content="Extraction works">
+  <meta property="og:image" content="/img/teaser.jpg">
+</head>
+<body>
+  <nav><a href="/">Home</a><a href="/about">About</a></nav>
+  <article>
+    <h1>Extraction works</h1>
+    <p>The first paragraph of the article mentions <a href="/deep/link?a=1">a relative link</a> and enough words to be picked by the content extractor instead of the navigation or the sidebar noise around it.</p>
+    <p>A second paragraph with more than two hundred characters of body text, so that the article is clearly the most promising candidate on this page and the surrounding boilerplate is dropped from the result.</p>
+  </article>
+  <aside><p>Sidebar advertising copy that should not end up in the extracted text at all.</p></aside>
+  <footer>
+    <a href="/story/1">1</a>
+    <a href="/story/2" class="next">Next page &rsaquo;</a>
+    <a href="/imprint">Imprint</a>
+  </footer>
+</body>
+</html>
